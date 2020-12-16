@@ -1,0 +1,36 @@
+{
+	"users": [
+		{
+			"email": "email@mail.com",
+			"password": "password",
+			"photo": "photo",
+			"created_at": "",
+			"updated_at": "",
+			"deleted_at": null
+		}
+	],
+	"rooms": [
+		{
+			"room_name": "room_name",
+			"room_capacity": 5,
+			"photo": "photo",
+			"created_at": "",
+			"updated_at": "",
+			"deleted_at": null
+		}
+	],
+	"bookings": [
+		{
+			"user_id": 1,
+			"room_id": 1,
+			"total_person": 2,
+			"booking_time": 10,
+			"noted": "no note",
+			"check_in_time": "",
+			"check_out_time": "",
+			"created_at": "",
+			"updated_at": "",
+			"deleted_at": null
+		}
+	]
+}

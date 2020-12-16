@@ -1,0 +1,36 @@
+{
+  "name": "skilltestrsp-be",
+  "version": "1.0.0",
+  "description": "# Skill Test menuju RSP Pool - Backend",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app.js",
+    "db:create": "node ./migrations/index.js db:create",
+    "db:drop": "node ./migrations/index.js db:drop",
+    "db:migrate": "node ./migrations/index.js migrate",
+    "db:migrate:undo": "node ./migrations/index.js migrate undo",
+    "db:seed": "node ./migrations/index.js seed",
+    "db:seed:undo": "node ./migrations/index.js seed undo",
+    "help": "node ./migrations/index.js help"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Fikrimarzuki/skilltestrsp-be.git"
+  },
+  "keywords": [],
+  "author": "fikrimarzuki",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Fikrimarzuki/skilltestrsp-be/issues"
+  },
+  "homepage": "https://github.com/Fikrimarzuki/skilltestrsp-be#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "crypto-js": "^4.0.0",
+    "express": "^4.17.1",
+    "jsonwebtoken": "^8.5.1",
+    "mysql": "^2.18.1",
+    "nodemailer": "^6.4.17"
+  }
+}
