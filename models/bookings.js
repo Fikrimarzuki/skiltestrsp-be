@@ -32,16 +32,14 @@ class RoomModel {
 			booking_time,
 			noted,
 			check_in_time,
-			check_out_time,
-			created_at,
-			updated_at,
-			deleted_at
+			check_out_time
 		} = payload;
+		const date = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '');
 		let query = `
 			INSERT INTO bookings
 				(user_id, room_id, total_person, booking_time, noted, check_in_time, check_out_time, created_at, updated_at, deleted_at)
 			VALUES
-				(${user_id}, ${room_id}, ${total_person}, ${booking_time}, ${noted}, ${check_in_time}, ${check_out_time}, ${created_at}, ${updated_at}, ${deleted_at});
+				(${user_id}, ${room_id}, ${total_person}, '${booking_time}', '${noted}', '${check_in_time}', '${check_out_time}', '${date}', '${date}', null);
 		`;
 		pool.query(query, (err, data) => {
 			if (err) {
@@ -61,11 +59,9 @@ class RoomModel {
 			booking_time,
 			noted,
 			check_in_time,
-			check_out_time,
-			created_at,
-			updated_at,
-			deleted_at
+			check_out_time
 		} = payload;
+		const date = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '');
 		let query = `
 			UPDATE bookings
 			SET
@@ -76,9 +72,30 @@ class RoomModel {
 				noted = ${noted},
 				check_in_time = ${check_in_time},
 				check_out_time = ${check_out_time},
-				created_at = ${created_at},
-				updated_at = ${updated_at},
-				deleted_at = ${deleted_at}
+				updated_at = ${date}
+			WHERE
+				id = ${id};
+		`
+		pool.query(query, (err, data) => {
+			if (err) {
+				cb(err, null);
+			} else {
+				cb(null, data);
+			}
+		})
+	}
+
+	static checkIn(payload, cb) {
+		const {
+			id,
+			checkInDate
+		} = payload;
+		const date = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '');
+		let query = `
+			UPDATE bookings
+			SET
+				check_in_time = ${checkInDate},
+				updated_at = ${date}
 			WHERE
 				id = ${id};
 		`

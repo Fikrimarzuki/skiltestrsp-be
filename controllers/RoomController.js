@@ -22,7 +22,7 @@ class RoomController {
 			if (err) {
 				next(err)
 			} else {
-				res.status(200).json(data);
+				res.status(201).json(data);
 			}
 		})
 	}
@@ -30,7 +30,7 @@ class RoomController {
 	static update(req, res, next) {
 		let payload = req.body;
 		payload.id = req.params.id;
-		Room.update(id, (err, data) => {
+		Room.update(payload, (err, data) => {
 			if (err) {
 				next(err);
 			} else {

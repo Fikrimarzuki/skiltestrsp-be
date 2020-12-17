@@ -5,6 +5,7 @@ const booking_migration = require("./booking_setup");
 const room_seeding = require("../seeders/seedRoom");
 const user_seeding = require("../seeders/seedUser");
 const booking_seeding = require("../seeders/seedBooking");
+const pool = require("../config/config");
 const argv = process.argv;
 
 let command = argv[2];
@@ -18,29 +19,53 @@ switch(command) {
 		database_setup.down();
 		break;
 	case "migrate":
+		console.log("migration start")
 		if (input[0] === "undo") {
-			booking_migration.down();
-			user_migration.down();
-			room_migration.down();
-			console.log("done delete all table");
+			booking_migration.down(() => {
+				user_migration.down(() => {
+					room_migration.down(() => {
+						pool.end();
+						console.log("done delete all table");
+					});
+				});
+			});
 		} else {
-			user_migration.up();
-			room_migration.up();
-			booking_migration.up();
-			console.log("done create all table");
+			user_migration.up(() => {
+				room_migration.up(() => {
+					booking_migration.up(() => {
+						pool.end();
+						console.log("done create all table");
+					});
+				});
+			});
 		}
 		break;
 	case "seed":
+		console.log("seed start")
 		if (input[0] === "undo") {
-			booking_seeding.down();
-			user_seeding.down();
-			room_seeding.down();
-			console.log("done delete all data from table");
+			booking_seeding.down(() => {
+				console.log("Done delete all data from bookings");
+				user_seeding.down(() => {
+					console.log("Done delete all data from users");
+					room_seeding.down(() => {
+						console.log("Done delete all data from rooms");
+						pool.end();
+						console.log("done delete all data from table");
+					});
+				});
+			});
 		} else {
-			user_seeding.up();
-			room_seeding.up();
-			booking_seeding.up();
-			console.log("done seeding data to database");
+			user_seeding.up(() => {
+				console.log("Done seeding to users");
+				room_seeding.up(() => {
+					console.log("Done seeding to rooms");
+					booking_seeding.up(() => {
+						console.log("Done seeding to bookings");
+						pool.end();
+						console.log("done seeding data to database");
+					});
+				});
+			});
 		}
 		break;
 	case "help":
@@ -54,4 +79,5 @@ switch(command) {
 		console.log("db:seed:undo = delete data from database");
 		break;
 }
+
 console.log(command, input);

@@ -1,30 +1,41 @@
 const pool = require("../config/config");
 const { bookings: data } = require("../data/seedData.json");
 
+let query = "INSERT INTO bookings SET ?;";
 let dropQuery = "DELETE FROM bookings;";
 
-let query = `
-	INSERT INTO bookings
-	(user_id, room_id, total_person, booking_time, noted, check_in_time, check_out_time, created_at, updated_at, deleted_at)
-	VALUES
-	($1, $2, $3, $4, $5, $6, $7, $8, $9, $10);
-`;
-
 module.exports = {
-	up: function() {
-		console.log("Seeding data...");
-		pool.query(query, (error, result, fields) => {
-			if (error) throw error;
-			else console.log("Done seeding to bookings");
-			pool.end();
+	up: function(cb) {
+		data.forEach(el => {
+			const date = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '');
+			let tomorrowDate = new Date();
+			tomorrowDate.setDate(tomorrowDate.getDate() + 1);
+			tomorrowDate = tomorrowDate.toISOString().replace(/T/, ' ').replace(/\..+/, '');
+			let payload = {
+				user_id: el.user_id,
+				room_id: el.room_id,
+				total_person: el.total_person,
+				booking_time: date,
+				noted: el.noted,
+				check_in_time: date,
+				check_out_time: tomorrowDate,
+				created_at: date,
+				updated_at: date,
+				deleted_at: null
+			};
+			pool.query(query, payload, (error, result, fields) => {
+				if (error) throw error;
+				else cb();
+				// pool.end();
+			})
 		})
 	},
 
-	down: function() {
+	down: function(cb) {
 		pool.query(dropQuery, (error, result, fields) => {
 			if (error) throw error;
-			else console.log("Done delete all data from bookings");
-			pool.end();
+			else cb();
+			// pool.end();
 		})
 	}
 }

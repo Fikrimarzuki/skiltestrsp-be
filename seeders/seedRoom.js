@@ -1,30 +1,34 @@
 const pool = require("../config/config");
 const { rooms: data } = require("../data/seedData.json");
 
+let query = "INSERT INTO rooms SET ?;";
 let dropQuery = "DELETE FROM rooms;";
 
-let query = `
-	INSERT INTO rooms
-	(room_name, room_capacity, photo, created_at, updated_at, deleted_at)
-	VALUES
-	($1, $2, $3, $4, $5, $6);
-`;
-
 module.exports = {
-	up: function() {
-		console.log("Seeding data...");
-		pool.query(query, (error, result, fields) => {
-			if (error) throw error;
-			else console.log("Done seeding to rooms");
-			pool.end();
+	up: function(cb) {
+		data.forEach(el => {
+			const date = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '');
+			let payload = { 
+				room_name: el.room_name,
+				room_capacity: el.room_capacity,
+				photo: el.photo,
+				created_at: date,
+				updated_at: date,
+				deleted_at: null
+			};
+			pool.query(query, payload, (error, result, fields) => {
+				if (error) throw error;
+				else cb();
+				// pool.end();
+			})
 		})
 	},
 
-	down: function() {
+	down: function(cb) {
 		pool.query(dropQuery, (error, result, fields) => {
 			if (error) throw error;
-			else console.log("Done delete all data from rooms");
-			pool.end();
+			else cb();
+			// pool.end();
 		})
 	}
 }

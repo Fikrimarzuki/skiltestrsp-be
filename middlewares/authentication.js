@@ -19,7 +19,7 @@ module.exports = (req, res, next) => {
 				} else {
 					next({
 						name: "User not found",
-						status: 400,
+						status: 404,
 						msg: "Try to log in again"
 					})
 				}
