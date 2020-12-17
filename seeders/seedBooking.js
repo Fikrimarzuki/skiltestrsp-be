@@ -6,7 +6,7 @@ let dropQuery = "DELETE FROM bookings;";
 
 module.exports = {
 	up: function(cb) {
-		data.forEach(el => {
+		data.forEach((el, index) => {
 			const date = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '');
 			let tomorrowDate = new Date();
 			tomorrowDate.setDate(tomorrowDate.getDate() + 1);
@@ -25,7 +25,8 @@ module.exports = {
 			};
 			pool.query(query, payload, (error, result, fields) => {
 				if (error) throw error;
-				else cb();
+				else
+					if (index === data.length - 1) cb();
 				// pool.end();
 			})
 		})

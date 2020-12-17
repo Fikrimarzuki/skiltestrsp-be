@@ -6,7 +6,7 @@ let dropQuery = "DELETE FROM rooms;";
 
 module.exports = {
 	up: function(cb) {
-		data.forEach(el => {
+		data.forEach((el, index) => {
 			const date = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '');
 			let payload = { 
 				room_name: el.room_name,
@@ -18,7 +18,8 @@ module.exports = {
 			};
 			pool.query(query, payload, (error, result, fields) => {
 				if (error) throw error;
-				else cb();
+				else 
+					if (index === data.length - 1) cb();
 				// pool.end();
 			})
 		})

@@ -4,7 +4,6 @@ const authentication = require("../middlewares/authentication");
 const authorization = require("../middlewares/authorization");
 
 router.use(authentication);
-router.use("/", authorization.bookings);
 router.get("/", BookingController.findAll);
 router.post("/", BookingController.create);
 router.use("/:id", authorization.bookings);

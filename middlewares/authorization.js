@@ -53,7 +53,7 @@ module.exports = {
 				next(err);
 			} else {
 				if (data) {
-					if (data.user_id === userId) {
+					if (data.user_id === userId || userId === 1) {
 						req.userEmail = data.email;
 						req.room = data.room
 						next();

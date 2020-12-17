@@ -19,7 +19,7 @@ class UserController {
 
 	static register(req, res, next) {
 		let payload = req.body;
-		payload.password = crypto.hash512(payload.password);
+		payload.password = crypto.hashHmacSHA512(payload.password);
 		User.register(payload, (err, data) => {
 			if (err) {
 				next(err)
@@ -30,24 +30,16 @@ class UserController {
 	}
 
 	static login(req, res, next) {
-		let { id, email, password } = req.body;
-		User.findOne(id, (err, data) => {
+		let { email, password } = req.body;
+		User.login(email, (err, data) => {
 			if (err) {
 				next(err);
 			} else {
-				if (data) {
- 					if (data.email === email) {
-						password = crypto.hash512(password);
-						if (data.password === password) {
-							const token = jwt.generateToken({ id, email });
-							res.status(200).json(token);
-						} else {
-							next({
-								name: "User not found",
-								status: 400,
-								msg: "Wrong input"
-							})
-						}
+				if (data && data.length) {
+					password = crypto.hashHmacSHA512(password);
+					if (data[0].password === password) {
+						const token = jwt.generateToken({ id: data[0].id, email });
+						res.status(200).json({ token });
 					} else {
 						next({
 							name: "User not found",

@@ -2,7 +2,7 @@
 	"users": [
 		{
 			"email": "admin@mail.com",
-			"password": "password",
+			"password": "uWkukI34d5JmvB1n0bOsh7BNa+Odrw9BK4Z4RHoTj+KAqrfZHKRmQW1rjdhyVx6bSPBfU2IVBJJbPjBaHBjhJg==",
 			"photo": "photo",
 			"created_at": "",
 			"updated_at": "",
@@ -10,7 +10,7 @@
 		},
 		{
 			"email": "fikri.marzuki1993@gmail.com",
-			"password": "password",
+			"password": "nQLi1HiF7mQjxsnFfJjFYo4X2+gfBCQzh/4Fc+lXiVedm2ZQfBOZDMIHAeIys6Cx1cYnReZ15jBc14fUJE7NUg==",
 			"photo": "photo",
 			"created_at": "",
 			"updated_at": "",
@@ -32,7 +32,7 @@
 			"user_id": 2,
 			"room_id": 1,
 			"total_person": 2,
-			"booking_time": "",
+			"booking_time": "December 15, 2020",
 			"noted": "no note",
 			"check_in_time": "",
 			"check_out_time": "",

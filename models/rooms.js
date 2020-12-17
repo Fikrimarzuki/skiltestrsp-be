@@ -10,7 +10,6 @@ class RoomModel {
 				cb(null, data);
 			}
 		})
-		pool.end();		
 	}
 
 	static findOne(id, cb) {
@@ -58,7 +57,7 @@ class RoomModel {
 			UPDATE rooms
 			SET
 				room_name = '${room_name}',
-				room_capacity = '${room_capacity}',
+				room_capacity = ${room_capacity},
 				photo = '${photo}',
 				updated_at = '${date}'
 			WHERE

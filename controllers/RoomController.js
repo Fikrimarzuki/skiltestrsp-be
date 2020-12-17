@@ -10,7 +10,7 @@ class RoomController {
 
 	static findOne(req, res, next) {
 		const id = req.params.id;
-		Room.findOne((err, data) => {
+		Room.findOne(id, (err, data) => {
 			if (err) next(err);
 			else res.status(200).json(data);
 		})

@@ -1,11 +1,15 @@
 const { Room, Booking } = require("../models/");
 const nodemailer = require("nodemailer");
+const sgMail = require('@sendgrid/mail');
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 class BookingController {
 	static findAll(req, res, next) {
 		Booking.findAll((err, data) => {
 			if (err) next(err);
-			else res.status(200).json(data);
+			else 
+				data = data.filter(el => el.user_id === req.userId);
+				res.status(200).json(data);
 		})
 	}
 
@@ -18,16 +22,18 @@ class BookingController {
 	}
 
 	static create(req, res, next) {
-		const payload = req.body;
+		let payload = req.body;
+		payload.user_id = req.userId;
 		const { room_id, total_person, booking_time } = payload;
+		payload.booking_time = new Date(payload.booking_time).toISOString().replace(/T/, ' ').replace(/\..+/, '');
 		var todayDate = new Date().toISOString().slice(0,10);
-		var bookingDate = new Date(booking_time).toISOString().slice(0,10);
+		let bookingDate = new Date(booking_time).toISOString().slice(0, 10);
 		Room.findOne(room_id, (error, data) => {
 			if (error) {
 				next(error);
 			}	else {
-				if (data) {
-					if (data.room_capacity >= total_person) {
+				if (data && data.length) {
+					if (data[0].room_capacity >= total_person) {
 						Booking.create(payload, (err, result) => {
 							if (err) {
 								next(err)
@@ -35,8 +41,8 @@ class BookingController {
 								const transporter = nodemailer.createTransport({
 									service: "gmail",
 									auth: {
-										user: "admin@mail.com",
-										pass: "Superpass"
+										user: process.env.USERMAILER,
+										pass: process.env.PASSMAILER
 									}
 								})
 								const mailOptions = {
@@ -50,10 +56,8 @@ class BookingController {
 										This is your order information:
 											Room: ${data.room_name},
 											Total Person: ${data.total_person},
-											Booking Time: ${data.booking_time},
-											Noted: ${data.noted},
-											Check In Time: ${data.check_in_time},
-											Check Out Time: ${data.check_out_time}
+											Booking Time: ${bookingDate},
+											Noted: ${data.noted}
 
 										Don't forget to check in at the time.
 									`
@@ -73,7 +77,7 @@ class BookingController {
 											
 											We like to inform you that your booking time at:
 												Room Name: ${req.room}
-												Date: ${data.booking_time}
+												Date: ${bookingDate}
 											is today, dont forget to booking at the right time
 
 											Thank you
@@ -85,7 +89,7 @@ class BookingController {
 										}
 									})
 								}
-								res.status(201).json(data);
+								res.status(201).json({ msg: "booking success" });
 							}
 						})
 					} else {
@@ -127,16 +131,9 @@ class BookingController {
 			if (err) {
 				next(err);
 			} else {
-				const transporter = nodemailer.createTransport({
-					service: "gmail",
-					auth: {
-						user: "admin@mail.com",
-						pass: "Superpass"
-					}
-				})
-				const mailOptions = {
-					from: "admin@gmail.com",
+				const msg = {
 					to: req.userEmail,
+					from: "admin@gmail.com",
 					subject: "Check In Confirmation",
 					text: `
 						Hello,
@@ -144,12 +141,14 @@ class BookingController {
 						We want to inform you that you already check in.
 					`
 				}
-				transporter.sendMail(mailOptions, function(error, info) {
-					if (error) {
-						throw new Error(error);
-					}
-				})
-				res.status(200).json({ msg: "check in success"});
+        sgMail
+          .send(msg)
+          .then(() => {
+						res.status(200).json({ msg: "check in success" });
+          })
+          .catch((error) => {
+            next(error);
+          });
 			}
 		})
 	}

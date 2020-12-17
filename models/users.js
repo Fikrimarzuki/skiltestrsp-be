@@ -1,3 +1,5 @@
+const pool = require("../config/config");
+
 class UserModel {
 	static findAll(cb) {
 		let query = "SELECT id, email, photo, created_at, updated_at FROM users;"
@@ -8,7 +10,6 @@ class UserModel {
 				cb(null, data);
 			}
 		})
-		pool.end();		
 	}
 
 	static findOne(id, cb) {
@@ -35,6 +36,18 @@ class UserModel {
 			VALUES
 				('${email}', '${password}', '${photo}', '${date}', '${date}', null);
 		`;
+		pool.query(query, (err, data) => {
+			if (err) {
+				cb(err, null);
+			} else {
+				cb(null, data);
+			}
+		})
+	}
+
+	static login(email, cb) {
+		console.log(email);
+		let query = `SELECT * FROM users where email = '${email}';`
 		pool.query(query, (err, data) => {
 			if (err) {
 				cb(err, null);
