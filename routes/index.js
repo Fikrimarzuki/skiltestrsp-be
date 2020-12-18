@@ -9,5 +9,8 @@ router.get("/", (req, res, next) => {
 router.use("/users", usersRoutes);
 router.use("/rooms", roomsRoutes);
 router.use("/bookings", bookingRoutes);
+router.get("/*", (req, res, next) => {
+	res.status(404).json("Not Found, please check your endpoint");
+})
 
 module.exports = router;
